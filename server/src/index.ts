@@ -18,9 +18,14 @@ const app: Application = express();
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
+    if (config.server.nodeEnv === 'development') {
+      return callback(null, true);
+    }
+    
     if (!origin || config.cors.allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error(`Blocked by CORS: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
