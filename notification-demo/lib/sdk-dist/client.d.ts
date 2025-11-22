@@ -1,9 +1,29 @@
-import { InitOptions, RegisterDeviceOptions } from './types';
+import { InitOptions, RegisterDeviceOptions, MessageCallback, SilentMessageCallback } from './types';
 export declare class NotificationClient {
     private baseUrl;
     private appId;
+    private publicKey;
     private vapidPublicKey;
+    private messageCallback;
+    private backgroundMessageCallback;
+    private silentMessageCallback;
     constructor(options: InitOptions);
+    /**
+     * Set up listener for messages from service worker
+     */
+    private setupMessageListener;
+    /**
+     * Register callback for foreground messages (when app is visible)
+     */
+    onMessage(callback: MessageCallback): void;
+    /**
+     * Register callback for background messages (when app is not visible)
+     */
+    onBackgroundMessage(callback: MessageCallback): void;
+    /**
+     * Register callback for silent messages (no UI notification)
+     */
+    onSilentMessage(callback: SilentMessageCallback): void;
     /**
      * Get VAPID public key from server
      */

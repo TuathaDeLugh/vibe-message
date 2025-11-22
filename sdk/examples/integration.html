@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCM Clone SDK Example</title>
+    <title>FCM Clone SDK Example - With Callbacks</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 900px;
             margin: 50px auto;
             padding: 20px;
         }
@@ -28,23 +28,46 @@
             color: red;
         }
 
+        .info {
+            color: blue;
+        }
+
         pre {
             background: #f4f4f4;
             padding: 15px;
             border-radius: 5px;
             overflow-x: auto;
         }
+
+        .notification-box {
+            border: 2px solid #4CAF50;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f9fff9;
+        }
+
+        .silent-box {
+            border: 2px solid #2196F3;
+            background: #f0f8ff;
+        }
+
+        .background-box {
+            border: 2px solid #FF9800;
+            background: #fff8f0;
+        }
     </style>
 </head>
 
 <body>
-    <h1>FCM Clone SDK Integration Example</h1>
+    <h1>FCM Clone SDK - Full Example</h1>
 
     <div>
         <h2>Configuration</h2>
-        <label>Base URL: <input type="text" id="baseUrl" value="http://localhost:3000"
+        <label>Base URL: <input type="text" id="baseUrl" value="http://localhost:3000/api"
                 style="width: 300px;"></label><br>
         <label>App ID: <input type="text" id="appId" value="your-app-id" style="width: 300px;"></label><br>
+        <label>Public Key: <input type="text" id="publicKey" value="your-public-key" style="width: 300px;"></label><br>
         <label>User ID: <input type="text" id="userId" value="user-123" style="width: 300px;"></label><br>
     </div>
 
@@ -60,6 +83,11 @@
     </div>
 
     <div>
+        <h2>Received Messages</h2>
+        <div id="messages"></div>
+    </div>
+
+    <div>
         <h2>Integration Code</h2>
         <pre><code>// 1. Install SDK
 npm install fcm-clone-sdk
@@ -68,17 +96,34 @@ npm install fcm-clone-sdk
 import { initNotificationClient } from 'fcm-clone-sdk';
 
 const client = initNotificationClient({
-  baseUrl: 'http://localhost:3000',
-  appId: 'your-app-id'
+  baseUrl: 'http://localhost:3000/api',
+  appId: 'your-app-id',
+  publicKey: 'your-public-key'
 });
 
-// 3. Register device
+// 3. Register callbacks
+client.onMessage((payload) => {
+  console.log('Foreground message:', payload);
+  // Handle message when app is visible
+});
+
+client.onBackgroundMessage((payload) => {
+  console.log('Background message:', payload);
+  // Handle message when user clicks notification
+});
+
+client.onSilentMessage((data) => {
+  console.log('Silent message:', data);
+  // Handle silent data sync
+});
+
+// 4. Register device
 await client.registerDevice({
   externalUserId: 'user-123',
   serviceWorkerPath: '/push-sw.js'
 });
 
-// 4. Unregister device
+// 5. Unregister device
 await client.unregisterDevice('user-123');</code></pre>
     </div>
 
@@ -91,22 +136,72 @@ await client.unregisterDevice('user-123');</code></pre>
         window.registerDevice = async function () {
             const baseUrl = document.getElementById('baseUrl').value;
             const appId = document.getElementById('appId').value;
+            const publicKey = document.getElementById('publicKey').value;
             const userId = document.getElementById('userId').value;
             const status = document.getElementById('status');
 
             try {
                 status.innerHTML = '<p>Initializing...</p>';
 
-                client = initNotificationClient({ baseUrl, appId });
+                // Initialize client
+                client = initNotificationClient({ baseUrl, appId, publicKey });
+
+                // Register callbacks
+                client.onMessage((payload) => {
+                    console.log('📱 Foreground message received:', payload);
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = `
+                        <div class="notification-box">
+                            <h3>📱 Foreground Message (App Visible)</h3>
+                            <p><strong>Title:</strong> ${payload.title}</p>
+                            <p><strong>Body:</strong> ${payload.body || 'N/A'}</p>
+                            <p><strong>Data:</strong> ${JSON.stringify(payload.data || {})}</p>
+                            <p><em>Received at: ${new Date().toLocaleTimeString()}</em></p>
+                        </div>
+                    ` + messagesDiv.innerHTML;
+                });
+
+                client.onBackgroundMessage((payload) => {
+                    console.log('🔔 Background message received:', payload);
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = `
+                        <div class="notification-box background-box">
+                            <h3>🔔 Background Message (Notification Clicked)</h3>
+                            <p><strong>Title:</strong> ${payload.title}</p>
+                            <p><strong>Body:</strong> ${payload.body || 'N/A'}</p>
+                            <p><strong>Data:</strong> ${JSON.stringify(payload.data || {})}</p>
+                            <p><em>Received at: ${new Date().toLocaleTimeString()}</em></p>
+                        </div>
+                    ` + messagesDiv.innerHTML;
+                });
+
+                client.onSilentMessage((data) => {
+                    console.log('🔇 Silent message received:', data);
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = `
+                        <div class="notification-box silent-box">
+                            <h3>🔇 Silent Message (No UI)</h3>
+                            <p><strong>Data:</strong> ${JSON.stringify(data)}</p>
+                            <p><em>Received at: ${new Date().toLocaleTimeString()}</em></p>
+                        </div>
+                    ` + messagesDiv.innerHTML;
+                });
 
                 status.innerHTML = '<p>Requesting permission and registering...</p>';
 
+                // Register device
                 await client.registerDevice({
                     externalUserId: userId,
                     serviceWorkerPath: '/push-sw.js'
                 });
 
-                status.innerHTML = '<p class="success">✓ Device registered successfully!</p>';
+                status.innerHTML = '<p class="success">✓ Device registered successfully! Callbacks are active.</p>';
+                status.innerHTML += '<p class="info">ℹ️ Try sending a notification from the admin panel:</p>';
+                status.innerHTML += '<ul>';
+                status.innerHTML += '<li>Keep this tab <strong>visible</strong> → onMessage() will fire</li>';
+                status.innerHTML += '<li>Switch to another tab → Push notification will show</li>';
+                status.innerHTML += '<li>Send silent notification → onSilentMessage() will fire</li>';
+                status.innerHTML += '</ul>';
             } catch (error) {
                 status.innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
                 console.error(error);
@@ -128,22 +223,12 @@ await client.unregisterDevice('user-123');</code></pre>
                 await client.unregisterDevice(userId);
 
                 status.innerHTML = '<p class="success">✓ Device unregistered successfully!</p>';
+                client = null;
             } catch (error) {
                 status.innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
                 console.error(error);
             }
         };
-
-        // Listen for silent push messages
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data.type === 'SILENT_PUSH') {
-                    console.log('Silent push data received:', event.data.data);
-                    document.getElementById('status').innerHTML +=
-                        `<p class="success">Silent push received: ${JSON.stringify(event.data.data)}</p>`;
-                }
-            });
-        }
     </script>
 </body>
 

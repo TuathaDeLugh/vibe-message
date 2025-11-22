@@ -28,7 +28,8 @@ CREATE TABLE apps (
   name VARCHAR(255) NOT NULL,
   description TEXT,
   public_app_id VARCHAR(50) UNIQUE NOT NULL,
-  secret_key VARCHAR(100) NOT NULL,
+  public_key VARCHAR(100) NOT NULL,  -- For client SDK authentication
+  secret_key VARCHAR(100) NOT NULL,  -- For server-to-server API authentication
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

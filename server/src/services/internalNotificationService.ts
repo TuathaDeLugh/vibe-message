@@ -56,17 +56,17 @@ export const notifySuperAdmins = async (title: string, body: string, data?: any)
   try {
     const internalApp = await getOrCreateInternalApp();
 
-    // Get all super admin user IDs
+    // Get all super admin emails (frontend uses email as externalUserId)
     const superAdmins = await query(
-      'SELECT id FROM users WHERE role = $1',
-      ['SUPER_ADMIN']
+      'SELECT email FROM users WHERE role = $1 AND status = $2',
+      ['SUPER_ADMIN', 'APPROVED']
     );
 
     if (superAdmins.rows.length === 0) {
       return;
     }
 
-    const externalUserIds = superAdmins.rows.map((admin) => `admin_${admin.id}`);
+    const externalUserIds = superAdmins.rows.map((admin) => admin.email);
 
     await sendPushNotification(
       internalApp.id,
@@ -96,6 +96,19 @@ export const notifyUser = async (
   try {
     const internalApp = await getOrCreateInternalApp();
 
+    // Get user email (frontend uses email as externalUserId)
+    const userResult = await query(
+      'SELECT email FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      console.error(`User ${userId} not found`);
+      return;
+    }
+
+    const userEmail = userResult.rows[0].email;
+
     await sendPushNotification(
       internalApp.id,
       {
@@ -104,7 +117,7 @@ export const notifyUser = async (
         icon: '/admin-icon.png',
         data,
       },
-      [`admin_${userId}`]
+      [userEmail]
     );
   } catch (error) {
     console.error(`Failed to notify user ${userId}:`, error);
@@ -179,7 +192,7 @@ export const notifyUserAppLimitChanged = async (
  */
 export const getAdminNotifications = async (limit: number = 20): Promise<any[]> => {
   const internalApp = await getOrCreateInternalApp();
-  
+
   const result = await query(
     `SELECT * FROM notifications 
      WHERE app_id = $1 

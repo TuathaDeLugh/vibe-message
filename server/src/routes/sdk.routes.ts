@@ -7,7 +7,7 @@ import { getVapidPublicKey } from '../utils/webPush';
 const router = Router();
 
 // Get VAPID public key (needed for client-side push subscription)
-router.get('/vapid-public-key', (req: Request, res: Response) => {
+router.get('/vapid-public-key', (_req: Request, res: Response) => {
   res.json({
     success: true,
     data: {
@@ -30,13 +30,13 @@ router.get('/vapid-public-key', (req: Request, res: Response) => {
  *             type: object
  *             required:
  *               - appId
- *               - secretKey
+ *               - publicKey
  *               - subscription
  *               - externalUserId
  *             properties:
  *               appId:
  *                 type: string
- *               secretKey:
+ *               publicKey:
  *                 type: string
  *               subscription:
  *                 type: object
@@ -50,14 +50,8 @@ router.post('/register-device', async (req: Request, res: Response, next: NextFu
   try {
     const data = validateRegisterDevice(req.body);
 
-    // Validate app exists and is active
-    const app = await appService.getAppByPublicId(data.appId);
-    if (!app) {
-      return res.status(404).json({
-        success: false,
-        message: 'App not found or inactive',
-      });
-    }
+    // Validate SDK credentials (appId + publicKey)
+    const app = await appService.validateSdkCredentials(data.appId, data.publicKey);
 
     // Register device
     const device = await deviceService.registerDevice(

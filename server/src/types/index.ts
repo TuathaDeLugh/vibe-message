@@ -32,6 +32,7 @@ export interface App {
   name: string;
   description: string | null;
   public_app_id: string;
+  public_key: string;
   secret_key: string;
   is_active: boolean;
   created_at: Date;
@@ -131,6 +132,7 @@ export interface UpdateAppRequest {
 
 export interface RegisterDeviceRequest {
   appId: string;
+  publicKey: string;
   externalUserId: string;
   subscription: PushSubscription;
 }
