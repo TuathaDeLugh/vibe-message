@@ -1,11 +1,11 @@
-# FCM Clone SDK
+# Vibe Message SDK
 
-JavaScript SDK for integrating FCM Clone push notifications into your web application.
+Lightweight JavaScript SDK for web push notifications - A modern Firebase Cloud Messaging alternative.
 
 ## Installation
 
 ```bash
-npm install fcm-clone-sdk
+npm install vibe-message
 ```
 
 ## Usage
@@ -46,11 +46,12 @@ self.addEventListener('notificationclick', (event) => {
 ### 2. Initialize SDK
 
 ```javascript
-import { initNotificationClient } from 'fcm-clone-sdk';
+import { initNotificationClient } from 'vibe-message';
 
 const client = initNotificationClient({
-  baseUrl: 'http://localhost:3000',
-  appId: 'your-app-id'
+  baseUrl: 'https://your-backend.com/api',
+  appId: 'your-app-id',
+  publicKey: 'your-public-key'
 });
 ```
 
@@ -64,7 +65,27 @@ await client.registerDevice({
 });
 ```
 
-### 4. Unregister Device
+### 4. Listen for Messages
+
+```javascript
+// Foreground messages (when app is visible)
+client.onMessage((payload) => {
+  console.log('Message received:', payload);
+  // Show in-app notification
+});
+
+// Background messages (when notification is clicked)
+client.onBackgroundMessage((payload) => {
+  console.log('Notification clicked:', payload);
+});
+
+// Silent messages (no UI)
+client.onSilentMessage((data) => {
+  console.log('Silent message:', data);
+});
+```
+
+### 5. Unregister Device
 
 ```javascript
 // When user logs out
@@ -78,8 +99,9 @@ await client.unregisterDevice('user-123');
 Initialize the notification client.
 
 **Parameters:**
-- `options.baseUrl` (string): Base URL of your FCM Clone backend
+- `options.baseUrl` (string): Base URL of your backend API
 - `options.appId` (string): Your app ID from the admin panel
+- `options.publicKey` (string): Your app's public key
 
 **Returns:** `NotificationClient`
 
@@ -102,10 +124,44 @@ Unregister a device from push notifications.
 
 **Returns:** `Promise<void>`
 
-## Example
+### `client.onMessage(callback)`
 
-See `examples/integration.html` for a complete working example.
+Register a callback for foreground messages.
+
+**Parameters:**
+- `callback` (function): Function to handle message payload
+
+### `client.onBackgroundMessage(callback)`
+
+Register a callback for background messages (notification clicks).
+
+**Parameters:**
+- `callback` (function): Function to handle message payload
+
+### `client.onSilentMessage(callback)`
+
+Register a callback for silent messages.
+
+**Parameters:**
+- `callback` (function): Function to handle message data
+
+## Features
+
+- 🚀 **Lightweight** - Minimal dependencies, small bundle size
+- 🔒 **Secure** - VAPID authentication, encrypted push
+- 📱 **Cross-platform** - Works on all modern browsers
+- 🎯 **Type-safe** - Full TypeScript support
+- 🔄 **Background sync** - Receive notifications when app is closed
+- 🎨 **Customizable** - Full control over notification appearance
+
+## Browser Support
+
+- Chrome/Edge 50+
+- Firefox 44+
+- Safari 16+ (macOS 13+, iOS 16.4+)
+- Opera 37+
 
 ## License
 
 MIT
+
