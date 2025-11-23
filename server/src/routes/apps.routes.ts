@@ -156,4 +156,22 @@ router.get('/user/warnings', async (req: Request, res: Response, next: NextFunct
   }
 });
 
+// Get system app public credentials (for notifications when user has no apps)
+router.get('/system/public', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { getOrCreateInternalApp } = require('../services/internalNotificationService');
+    const app = await getOrCreateInternalApp();
+
+    res.json({
+      success: true,
+      data: {
+        public_app_id: app.public_app_id,
+        public_key: app.public_key || '', // Ensure public_key is returned
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

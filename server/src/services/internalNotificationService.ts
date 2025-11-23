@@ -11,7 +11,7 @@ const INTERNAL_APP_NAME = 'Admin Panel Notifications';
 export const getOrCreateInternalApp = async (): Promise<{ id: number; public_app_id: string }> => {
   // Check if internal app exists
   const existingApp = await query(
-    'SELECT id, public_app_id FROM apps WHERE name = $1 AND description = $2',
+    'SELECT id, public_app_id, public_key FROM apps WHERE name = $1 AND description = $2',
     [INTERNAL_APP_NAME, 'Internal app for admin panel notifications']
   );
 
@@ -36,7 +36,7 @@ export const getOrCreateInternalApp = async (): Promise<{ id: number; public_app
   const newApp = await query(
     `INSERT INTO apps (user_id, name, description, public_app_id, secret_key, is_active)
      VALUES ($1, $2, $3, $4, $5, true)
-     RETURNING id, public_app_id`,
+     RETURNING id, public_app_id, public_key`,
     [
       superAdmin.rows[0].id,
       INTERNAL_APP_NAME,
