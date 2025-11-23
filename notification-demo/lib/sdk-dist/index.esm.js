@@ -33,8 +33,60 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
 class NotificationClient {
     constructor(options) {
         this.vapidPublicKey = null;
+        // Callback handlers
+        this.messageCallback = null;
+        this.backgroundMessageCallback = null;
+        this.silentMessageCallback = null;
         this.baseUrl = options.baseUrl;
         this.appId = options.appId;
+        this.publicKey = options.publicKey;
+        // Set up service worker message listener
+        this.setupMessageListener();
+    }
+    /**
+     * Set up listener for messages from service worker
+     */
+    setupMessageListener() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                const message = event.data;
+                switch (message.type) {
+                    case 'FOREGROUND_MESSAGE':
+                        if (this.messageCallback) {
+                            this.messageCallback(message.payload);
+                        }
+                        break;
+                    case 'BACKGROUND_MESSAGE':
+                        if (this.backgroundMessageCallback) {
+                            this.backgroundMessageCallback(message.payload);
+                        }
+                        break;
+                    case 'SILENT_MESSAGE':
+                        if (this.silentMessageCallback) {
+                            this.silentMessageCallback(message.data);
+                        }
+                        break;
+                }
+            });
+        }
+    }
+    /**
+     * Register callback for foreground messages (when app is visible)
+     */
+    onMessage(callback) {
+        this.messageCallback = callback;
+    }
+    /**
+     * Register callback for background messages (when app is not visible)
+     */
+    onBackgroundMessage(callback) {
+        this.backgroundMessageCallback = callback;
+    }
+    /**
+     * Register callback for silent messages (no UI notification)
+     */
+    onSilentMessage(callback) {
+        this.silentMessageCallback = callback;
     }
     /**
      * Get VAPID public key from server
@@ -113,6 +165,7 @@ class NotificationClient {
                 },
                 body: JSON.stringify({
                     appId: this.appId,
+                    publicKey: this.publicKey,
                     externalUserId: options.externalUserId,
                     subscription: subscriptionObject,
                 }),

@@ -38,6 +38,7 @@ Follow these steps to set up the project from scratch.
 
 1. Ensure PostgreSQL is running.
 2. Create the database:
+
    ```bash
    # Using terminal
    createdb messagedb
@@ -51,16 +52,19 @@ Follow these steps to set up the project from scratch.
 ### Step 2: Backend Setup
 
 1. Navigate to the server directory:
+
    ```bash
    cd server
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Configure Environment Variables:
+
    - Copy the example file:
      ```bash
      cp .env.example .env
@@ -71,6 +75,7 @@ Follow these steps to set up the project from scratch.
      - `VAPID_KEYS`: Run `npx web-push generate-vapid-keys` and paste the output.
 
 4. Initialize Database Schema:
+
    ```bash
    npm run db:setup
    ```
@@ -88,16 +93,19 @@ Follow these steps to set up the project from scratch.
 The SDK needs to be built and linked locally so the frontend can use it.
 
 1. Open a new terminal and navigate to the sdk directory:
+
    ```bash
    cd sdk
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Build the SDK:
+
    ```bash
    npm run build
    ```
@@ -112,28 +120,13 @@ The SDK needs to be built and linked locally so the frontend can use it.
 ### Step 4: Frontend Setup
 
 1. Open a new terminal and navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Link the local SDK:
-   ```bash
-   npm link fcm-clone-sdk
-   ```
-   *Note: If you see type errors, you may need to restart your VS Code or TypeScript server.*
-
-4. Configure Environment Variables (Optional):
-   ```bash
-   cp .env.example .env
    ```
    Ensure `VITE_API_URL=http://localhost:3000/api`.
 
-5. Start the Frontend:
+   ```
+
+2. Start the Frontend:
    ```bash
    npm run dev
    ```
@@ -144,11 +137,14 @@ The SDK needs to be built and linked locally so the frontend can use it.
 ## 📖 Usage Guide
 
 ### 1. Initial Login (Super Admin)
+
 The system creates a default Super Admin account on the first run.
+
 - **Email**: `admin@vibe-message.com` (or check `.env`)
 - **Password**: `SuperAdmin@123` (or check `.env`)
 
 ### 2. Creating a New User
+
 1. Go to `http://localhost:5173/signup`.
 2. Create a new account.
 3. **Important**: New accounts are `PENDING` by default.
@@ -156,11 +152,14 @@ The system creates a default Super Admin account on the first run.
 5. Go to **Users** section and click **Approve** on the new user.
 
 ### 3. Creating an App
+
 1. Log in with the approved user account.
 2. Go to **Apps** -> **Create New App**.
 3. Enter app details.
-     serviceWorkerPath: '/push-sw.js'
+   serviceWorkerPath: '/push-sw.js'
    });
+   ```
+
    ```
 
 ---
@@ -168,15 +167,18 @@ The system creates a default Super Admin account on the first run.
 ## 🔧 Troubleshooting
 
 ### SDK 404 Error (vapid-public-key)
+
 - Ensure your SDK initialization URL has the `/api` suffix: `http://localhost:3000/api`.
 - Ensure the backend server is running.
 
 ### Notifications Not Arriving
+
 - Check if the user ID matches. If you register as `user_123`, send the notification to `user_123`.
 - Check the browser console for "Notification permission denied".
 - Ensure the Service Worker is registered correctly.
 
 ### "Profile" Page Redirects to Home
+
 - This usually means the route is missing in `App.tsx`. We fixed this in the latest update.
 
 ---
@@ -184,17 +186,20 @@ The system creates a default Super Admin account on the first run.
 ## 🏗️ Architecture
 
 ### Backend
+
 - **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL (Raw SQL)
 - **Auth**: JWT + bcrypt
 - **Push**: `web-push` library
 
 ### Frontend
+
 - **Framework**: React + Vite
 - **Styling**: Tailwind CSS
 - **State**: Context API
 
 ### SDK
+
 - **Type**: Universal JavaScript Module (UMD/ESM)
 - **Features**: Service Worker management, VAPID key handling
 

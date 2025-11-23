@@ -1,6 +1,6 @@
 # 🔔 Notification Demo App
 
-A Next.js TypeScript demo application for testing push and in-app notifications with the FCM Clone service.
+A Next.js TypeScript demo application for testing push and in-app notifications with the Vibe Message service.
 
 ## Features
 
@@ -16,17 +16,19 @@ A Next.js TypeScript demo application for testing push and in-app notifications 
 ## Prerequisites
 
 - Node.js 18+ installed
-- FCM Clone backend server running (default: `http://localhost:3000`)
-- An app created in the FCM Clone dashboard with App ID and Secret Key
+- Vibe Message backend server running (default: `http://localhost:3000`)
+- An app created in the Vibe Message dashboard with App ID and Secret Key
 
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -37,26 +39,29 @@ npm run dev
 
 ### 1. Configure Your App
 
-- **Base URL**: Enter your FCM Clone backend URL (default: `http://localhost:3000`)
-- **App ID**: Enter your public app ID from the FCM Clone dashboard
-- **Secret Key**: Enter your secret key from the FCM Clone dashboard
+- **Base URL**: Enter your Vibe Message backend URL (default: `http://localhost:3000`)
+- **App ID**: Enter your public app ID from the Vibe Message dashboard
+- **Secret Key**: Enter your secret key from the Vibe Message dashboard
 - **Your User ID**: Enter a unique user ID for yourself (e.g., `user-1`)
 - **Other User ID**: Enter a different user ID to test cross-user notifications (e.g., `user-2`)
 
 ### 2. Register Device
 
 Click the **"Register Device"** button to:
+
 - Request browser notification permissions
-- Register your device with the FCM Clone service
+- Register your device with the Vibe Message service
 - Enable push notification reception
 
 ### 3. Test Notifications
 
 #### Self Notifications
+
 - **Self Push Notification**: Sends a push notification to yourself (works even when tab is closed)
 - **Self In-App Notification**: Shows a browser notification immediately (tab must be open)
 
 #### Other User Notifications
+
 - **Send Push to Other User**: Sends a push notification to another user ID
 - **Send In-App to Other User**: Info message (in-app notifications are local only)
 
@@ -73,12 +78,14 @@ To test notifications between users:
 ## How It Works
 
 ### Push Notifications
-- Uses the FCM Clone SDK to register devices
+
+- Uses the Vibe Message SDK to register devices
 - Sends notifications via the backend API (`/api/push/send`)
 - Works even when the browser tab is closed
 - Handled by the service worker (`/push-sw.js`)
 
 ### In-App Notifications
+
 - Uses the browser's Notification API
 - Only works when the tab is open
 - Displayed immediately without backend involvement
@@ -101,7 +108,7 @@ notification-demo/
 ### Notifications Not Working
 
 1. **Check browser permissions**: Ensure notifications are allowed in browser settings
-2. **Verify backend is running**: Make sure the FCM Clone server is accessible
+2. **Verify backend is running**: Make sure the Vibe Message server is accessible
 3. **Check App ID and Secret Key**: Ensure they match your app in the dashboard
 4. **Check console logs**: Open browser DevTools to see error messages
 
@@ -135,7 +142,7 @@ notification-demo/
 - **Next.js 15** - React framework
 - **TypeScript** - Type safety
 - **Tailwind CSS** - Styling
-- **FCM Clone SDK** - Notification client
+- **Vibe Message SDK** - Notification client
 - **Service Workers** - Push notification handling
 
 ## License

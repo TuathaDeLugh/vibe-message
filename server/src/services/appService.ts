@@ -7,7 +7,7 @@ import {
   UserRole,
 } from '../types';
 import { generateAppId, generateSecretKey } from '../utils/crypto';
-import { NotFoundError, ForbiddenError, ConflictError } from '../utils/errors';
+import { NotFoundError, ForbiddenError } from '../utils/errors';
 
 export const getUserApps = async (userId: number, role: UserRole): Promise<App[]> => {
   let queryText = 'SELECT * FROM apps';
@@ -100,15 +100,16 @@ export const createApp = async (
     }
   }
 
-  // Generate unique IDs
+  // Generate unique IDs and keys
   const publicAppId = generateAppId();
-  const secretKey = generateSecretKey();
+  const publicKey = generateSecretKey(); // Public key for SDK authentication
+  const secretKey = generateSecretKey(); // Secret key for server-to-server API
 
   const result = await query(
-    `INSERT INTO apps (user_id, name, description, public_app_id, secret_key)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO apps (user_id, name, description, public_app_id, public_key, secret_key)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
-    [userId, data.name, data.description || null, publicAppId, secretKey]
+    [userId, data.name, data.description || null, publicAppId, publicKey, secretKey]
   );
 
   return result.rows[0];
@@ -217,6 +218,10 @@ export const getAppByPublicId = async (publicAppId: string): Promise<App | null>
   return result.rows.length > 0 ? result.rows[0] : null;
 };
 
+/**
+ * Validate app credentials for server-to-server API (push notifications)
+ * Requires both publicAppId and secretKey
+ */
 export const validateAppCredentials = async (
   publicAppId: string,
   secretKey: string
@@ -228,6 +233,26 @@ export const validateAppCredentials = async (
 
   if (result.rows.length === 0) {
     throw new ForbiddenError('Invalid app credentials');
+  }
+
+  return result.rows[0];
+};
+
+/**
+ * Validate SDK credentials for client SDK (device registration)
+ * Requires both publicAppId and publicKey
+ */
+export const validateSdkCredentials = async (
+  publicAppId: string,
+  publicKey: string
+): Promise<App> => {
+  const result = await query(
+    'SELECT * FROM apps WHERE public_app_id = $1 AND public_key = $2 AND is_active = true',
+    [publicAppId, publicKey]
+  );
+
+  if (result.rows.length === 0) {
+    throw new ForbiddenError('Invalid SDK credentials');
   }
 
   return result.rows[0];

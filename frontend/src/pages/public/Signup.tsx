@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { signupUser, clearError } from '../../store/slices/authSlice';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { signupUser, clearError } from "../../store/slices/authSlice";
 
 export const Signup: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [validationError, setValidationError] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [validationError, setValidationError] = useState("");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user, loading, error } = useAppSelector((state) => state.auth);
@@ -21,16 +21,16 @@ export const Signup: React.FC = () => {
   useEffect(() => {
     // Redirect to pending page after successful signup
     if (user) {
-      navigate('/pending');
+      navigate("/pending");
     }
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationError('');
+    setValidationError("");
 
     if (password !== confirmPassword) {
-      setValidationError('Passwords do not match');
+      setValidationError("Passwords do not match");
       return;
     }
 
@@ -44,7 +44,7 @@ export const Signup: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold">Create Account</h2>
-          <p className="text-gray-600 mt-2">Get started with FCM Clone</p>
+          <p className="text-gray-600 mt-2">Get started with Vibe Message</p>
         </div>
 
         <div className="card">
@@ -93,7 +93,9 @@ export const Signup: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Confirm Password</label>
+              <label className="block text-sm font-medium mb-2">
+                Confirm Password
+              </label>
               <input
                 type="password"
                 value={confirmPassword}
@@ -108,13 +110,13 @@ export const Signup: React.FC = () => {
               disabled={loading}
               className="btn-primary w-full"
             >
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? "Creating account..." : "Sign Up"}
             </button>
           </form>
 
           <div className="mt-4 text-center">
             <p className="text-gray-600">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <Link to="/login" className="text-primary-600 hover:underline">
                 Sign in
               </Link>

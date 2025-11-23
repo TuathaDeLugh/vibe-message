@@ -1,13 +1,81 @@
-import { InitOptions, RegisterDeviceOptions, PushSubscription } from './types';
+import {
+  InitOptions,
+  RegisterDeviceOptions,
+  PushSubscription,
+  MessageCallback,
+  SilentMessageCallback,
+  ServiceWorkerMessage,
+  NotificationPayload,
+} from './types';
 
 export class NotificationClient {
   private baseUrl: string;
   private appId: string;
+  private publicKey: string;
   private vapidPublicKey: string | null = null;
+
+  // Callback handlers
+  private messageCallback: MessageCallback | null = null;
+  private backgroundMessageCallback: MessageCallback | null = null;
+  private silentMessageCallback: SilentMessageCallback | null = null;
 
   constructor(options: InitOptions) {
     this.baseUrl = options.baseUrl;
     this.appId = options.appId;
+    this.publicKey = options.publicKey;
+
+    // Set up service worker message listener
+    this.setupMessageListener();
+  }
+
+  /**
+   * Set up listener for messages from service worker
+   */
+  private setupMessageListener(): void {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        const message: ServiceWorkerMessage = event.data;
+
+        switch (message.type) {
+          case 'FOREGROUND_MESSAGE':
+            if (this.messageCallback) {
+              this.messageCallback(message.payload);
+            }
+            break;
+          case 'BACKGROUND_MESSAGE':
+            if (this.backgroundMessageCallback) {
+              this.backgroundMessageCallback(message.payload);
+            }
+            break;
+          case 'SILENT_MESSAGE':
+            if (this.silentMessageCallback) {
+              this.silentMessageCallback(message.data);
+            }
+            break;
+        }
+      });
+    }
+  }
+
+  /**
+   * Register callback for foreground messages (when app is visible)
+   */
+  onMessage(callback: MessageCallback): void {
+    this.messageCallback = callback;
+  }
+
+  /**
+   * Register callback for background messages (when app is not visible)
+   */
+  onBackgroundMessage(callback: MessageCallback): void {
+    this.backgroundMessageCallback = callback;
+  }
+
+  /**
+   * Register callback for silent messages (no UI notification)
+   */
+  onSilentMessage(callback: SilentMessageCallback): void {
+    this.silentMessageCallback = callback;
   }
 
   /**
@@ -20,13 +88,13 @@ export class NotificationClient {
 
     const response = await fetch(`${this.baseUrl}/sdk/vapid-public-key`);
     const data = await response.json();
-    
+
     if (!data.success || !data.data?.publicKey) {
       throw new Error('Failed to get VAPID public key');
     }
 
     this.vapidPublicKey = data.data.publicKey;
-    return this.vapidPublicKey;
+    return this.vapidPublicKey!;
   }
 
   /**
@@ -98,6 +166,7 @@ export class NotificationClient {
       },
       body: JSON.stringify({
         appId: this.appId,
+        publicKey: this.publicKey,
         externalUserId: options.externalUserId,
         subscription: subscriptionObject,
       }),

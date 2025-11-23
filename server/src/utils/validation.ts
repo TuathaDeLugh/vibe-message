@@ -107,10 +107,14 @@ export const validateUpdateApp = (data: any): UpdateAppRequest => {
 };
 
 export const validateRegisterDevice = (data: any): RegisterDeviceRequest => {
-  const { appId, externalUserId, subscription } = data;
+  const { appId, publicKey, externalUserId, subscription } = data;
 
   if (!appId || typeof appId !== 'string') {
     throw new ValidationError('appId is required');
+  }
+
+  if (!publicKey || typeof publicKey !== 'string') {
+    throw new ValidationError('publicKey is required');
   }
 
   if (!externalUserId || typeof externalUserId !== 'string') {
@@ -133,7 +137,7 @@ export const validateRegisterDevice = (data: any): RegisterDeviceRequest => {
     throw new ValidationError('subscription.keys.p256dh and auth are required');
   }
 
-  return { appId, externalUserId, subscription };
+  return { appId, publicKey, externalUserId, subscription };
 };
 
 export const validateUnregisterDevice = (data: any): UnregisterDeviceRequest => {

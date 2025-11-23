@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/store';
-import { loginUser, clearError } from '../../store/slices/authSlice';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { loginUser, clearError } from "../../store/slices/authSlice";
+import { useNotifications } from "../../context/NotificationContext";
 
 export const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user, loading, error } = useAppSelector((state) => state.auth);
+  const { requestPermission, permissionStatus } = useNotifications();
 
   useEffect(() => {
     // Clear any previous errors when component mounts
@@ -18,15 +20,20 @@ export const Login: React.FC = () => {
   useEffect(() => {
     // Redirect based on user status after successful login
     if (user) {
-      if (user.status === 'PENDING') {
-        navigate('/pending');
-      } else if (user.status === 'BANNED') {
+      // Request notification permission on login (user gesture)
+      if (permissionStatus === "default") {
+        requestPermission();
+      }
+
+      if (user.status === "PENDING") {
+        navigate("/pending");
+      } else if (user.status === "BANNED") {
         // Error will be shown from Redux state
       } else {
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     }
-  }, [user, navigate]);
+  }, [user, navigate, permissionStatus, requestPermission]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,13 +83,13 @@ export const Login: React.FC = () => {
               disabled={loading}
               className="btn-primary w-full"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
           <div className="mt-4 text-center">
             <p className="text-gray-600">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link to="/signup" className="text-primary-600 hover:underline">
                 Sign up
               </Link>

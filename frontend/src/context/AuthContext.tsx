@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, ReactNode } from 'react';
-import { User } from '../types';
-import { useAppDispatch, useAppSelector } from '../store/store';
-import { getCurrentUser, logoutUser } from '../store/slices/authSlice';
+import React, { createContext, useContext, useEffect, ReactNode } from "react";
+import { User } from "../types";
+import { useAppDispatch, useAppSelector } from "../store/store";
+import { getCurrentUser, logoutUser } from "../store/slices/authSlice";
 
 interface AuthContextType {
   user: User | null;
@@ -12,10 +12,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const dispatch = useAppDispatch();
   const { user, loading, token } = useAppSelector((state) => state.auth);
 
+  // Check for existing token on mount and fetch user data
   useEffect(() => {
     if (token && !user) {
       dispatch(getCurrentUser());
@@ -24,7 +27,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     dispatch(logoutUser());
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   const refreshUser = async () => {
@@ -41,7 +44,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

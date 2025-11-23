@@ -1,6 +1,6 @@
-# FCM Clone Frontend
+# Vibe Message Frontend
 
-React + Vite + TypeScript admin panel and landing page for FCM Clone platform.
+React + Vite + TypeScript admin panel and landing page for Vibe Message platform.
 
 ## Features
 
@@ -14,16 +14,19 @@ React + Vite + TypeScript admin panel and landing page for FCM Clone platform.
 ## Setup
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Configure environment (optional):
+
    ```bash
    cp .env.example .env
    ```
 
 3. Start development server:
+
    ```bash
    npm run dev
    ```
@@ -40,18 +43,21 @@ React + Vite + TypeScript admin panel and landing page for FCM Clone platform.
 ## Pages
 
 ### Public
+
 - `/` - Landing page
 - `/docs` - Documentation
 - `/login` - Login page
 - `/signup` - Signup page
 
 ### Authenticated
+
 - `/dashboard` - Dashboard overview
 - `/apps` - App list and creation
 - `/apps/:id` - App details and credentials
 - `/pending` - Pending approval page
 
 ### Super Admin
+
 - `/super/users` - User management
 
 ## Tech Stack

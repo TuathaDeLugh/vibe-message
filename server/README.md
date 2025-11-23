@@ -1,4 +1,4 @@
-# FCM Clone Server
+# Vibe Message Server
 
 Backend server for the FCM-style notification platform.
 
@@ -10,16 +10,19 @@ Backend server for the FCM-style notification platform.
 ## Setup
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Generate VAPID keys:**
+
    ```bash
    npx web-push generate-vapid-keys
    ```
 
 3. **Configure environment:**
+
    - Copy `.env.example` to `.env`
    - Update all environment variables, especially:
      - `DATABASE_URL`
@@ -28,6 +31,7 @@ Backend server for the FCM-style notification platform.
      - `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`
 
 4. **Setup database:**
+
    ```bash
    npm run db:setup
    ```
@@ -40,17 +44,20 @@ Backend server for the FCM-style notification platform.
 ## API Endpoints
 
 ### Authentication
+
 - `POST /auth/signup` - Register new admin
 - `POST /auth/login` - Login
 - `GET /auth/me` - Get current user
 
 ### Super Admin
+
 - `GET /admin/users` - List users
 - `PATCH /admin/users/:id/status` - Update user status
 - `PATCH /admin/users/:id/app-limit` - Set app limit
 - `POST /admin/users/:id/warn` - Create warning
 
 ### Apps
+
 - `GET /apps` - List apps
 - `POST /apps` - Create app
 - `GET /apps/:id` - Get app details
@@ -59,11 +66,13 @@ Backend server for the FCM-style notification platform.
 - `DELETE /apps/:id` - Delete app
 
 ### SDK Integration
+
 - `GET /sdk/vapid-public-key` - Get VAPID public key
 - `POST /sdk/register-device` - Register device
 - `POST /sdk/unregister-device` - Unregister device
 
 ### Push Notifications
+
 - `POST /api/push/send` - Send push notification
 
 ## Scripts
