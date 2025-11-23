@@ -6,7 +6,7 @@ import React, {
   useRef,
   ReactNode,
 } from "react";
-import { initNotificationClient } from "../lib/notification-sdk";
+import { initNotificationClient } from "vibe-message";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchApps } from "../store/slices/appsSlice";

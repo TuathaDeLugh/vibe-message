@@ -121,12 +121,33 @@ The SDK needs to be built and linked locally so the frontend can use it.
 
 1. Open a new terminal and navigate to the frontend directory:
 
+   ```bash
+   cd frontend
    ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Link the local SDK:
+
+   ```bash
+   npm link fcm-clone-sdk
+   ```
+
+   _Note: If you see type errors, you may need to restart your VS Code or TypeScript server._
+
+4. Configure Environment Variables (Optional):
+
+   ```bash
+   cp .env.example .env
+   ```
+
    Ensure `VITE_API_URL=http://localhost:3000/api`.
 
-   ```
-
-2. Start the Frontend:
+5. Start the Frontend:
    ```bash
    npm run dev
    ```

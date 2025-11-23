@@ -1,4 +1,4 @@
-// Service Worker for FCM Clone Push Notifications
+// Service Worker for Vibe Message Push Notifications
 // Implements FCM-like behavior: visibility detection and message routing
 
 self.addEventListener("push", (event) => {

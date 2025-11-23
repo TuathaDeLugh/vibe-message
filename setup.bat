@@ -1,6 +1,6 @@
 @echo off
 echo ================================
-echo FCM Clone - Quick Start Script
+echo Vibe Message - Quick Start Script
 echo ================================
 echo.
 

@@ -1,4 +1,4 @@
--- FCM Clone Platform Database Schema
+-- Vibe Message Platform Database Schema
 
 -- Drop tables if they exist (for clean setup)
 DROP TABLE IF EXISTS notification_logs CASCADE;

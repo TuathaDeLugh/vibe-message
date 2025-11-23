@@ -1,4 +1,4 @@
-// Service Worker for FCM Clone Push Notifications
+// Service Worker for Vibe Message Push Notifications
 
 self.addEventListener("push", (event) => {
   console.log("Push notification received:", event);

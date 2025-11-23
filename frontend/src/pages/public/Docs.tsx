@@ -508,7 +508,7 @@ const handleLogout = async () => {
                 {`"use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { initNotificationClient } from '@/lib/sdk';
+import { initNotificationClient } from 'vibe-message';
 import toast from 'react-hot-toast';
 
 const STORAGE_KEY = 'notification-config';

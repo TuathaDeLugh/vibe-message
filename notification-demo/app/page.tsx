@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { initNotificationClient } from "@/lib/sdk";
+import { initNotificationClient } from "vibe-message";
 import toast, { Toaster } from "react-hot-toast";
 
 const STORAGE_KEY = "fcm-demo-config";
@@ -417,7 +417,7 @@ export default function Home() {
             🔔 Notification Demo
           </h1>
           <p className="text-gray-600">
-            Test push and in-app notifications with your FCM Clone service
+            Test push and in-app notifications with your Vibe Message service
           </p>
         </div>
 
