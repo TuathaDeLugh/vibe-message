@@ -63,6 +63,26 @@ spec:
                 secretKeyRef:
                   name: backend-secret
                   key: VAPID_SUBJECT
+            - name: SUPER_ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: SUPER_ADMIN_EMAIL
+            - name: SUPER_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: SUPER_ADMIN_PASSWORD
+            - name: SUPER_ADMIN_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: SUPER_ADMIN_NAME
+            - name: ALLOWED_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: ALLOWED_ORIGINS
           resources:
             requests:
               memory: "128Mi"
