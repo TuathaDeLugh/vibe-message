@@ -1,5 +1,5 @@
 // Quick test script to check if public_key column exists
-import { query } from './config/database';
+import { query } from '../config/database';
 
 async function testPublicKey() {
     try {
