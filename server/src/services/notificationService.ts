@@ -14,9 +14,7 @@ export const notifyUserEvent = async (
     }
 ) => {
     try {
-        await sendPushNotification(appId, notification, {
-            externalUserIds: [userEmail]
-        });
+        await sendPushNotification(appId, notification, [userEmail]);
         console.log(`✅ Notification sent to ${userEmail}: ${notification.title}`);
     } catch (error) {
         console.error(`❌ Failed to send notification to ${userEmail}:`, error);
