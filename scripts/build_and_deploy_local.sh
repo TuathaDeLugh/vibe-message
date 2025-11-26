@@ -14,12 +14,22 @@ NC='\033[0m' # No Color
 
 # Detect cluster type
 detect_cluster() {
-    if kubectl config current-context | grep -q "kind"; then
+    CURRENT_CTX=$(kubectl config current-context)
+
+    # Exact match for your KIND cluster
+    if echo "$CURRENT_CTX" | grep -q "kind-message-app-cluster"; then
         echo "kind"
-    elif kubectl config current-context | grep -q "minikube"; then
+
+    # Fallback for any kind-* context
+    elif echo "$CURRENT_CTX" | grep -q "^kind-"; then
+        echo "kind"
+
+    elif echo "$CURRENT_CTX" | grep -q "minikube"; then
         echo "minikube"
-    elif kubectl config current-context | grep -q "docker-desktop"; then
+
+    elif echo "$CURRENT_CTX" | grep -q "docker-desktop"; then
         echo "docker-desktop"
+
     else
         echo "unknown"
     fi
@@ -55,9 +65,9 @@ echo -e "${YELLOW}Loading images into cluster...${NC}"
 case ${CLUSTER_TYPE} in
     "kind")
         echo "Loading images into kind cluster..."
-        kind load docker-image ${FRONTEND_IMAGE}
-        kind load docker-image ${BACKEND_IMAGE}
-        kind load docker-image ${DEMO_IMAGE}
+        kind load docker-image ${FRONTEND_IMAGE} --name message-app-cluster
+        kind load docker-image ${BACKEND_IMAGE} --name message-app-cluster
+        kind load docker-image ${DEMO_IMAGE} --name message-app-cluster
         ;;
     "minikube")
         echo "Loading images into minikube..."
@@ -100,6 +110,10 @@ echo "Applying services..."
 kubectl apply -f k8s/frontend-service.yaml
 kubectl apply -f k8s/backend-service.yaml
 kubectl apply -f k8s/demo-service.yaml
+
+# Note: PostgreSQL deployment commented out - using host PostgreSQL instead
+# Uncomment if you want to deploy PostgreSQL in-cluster:
+# kubectl apply -f k8s/postgres-deployment.yaml
 
 # Apply ingress
 echo "Applying ingress..."

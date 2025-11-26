@@ -23,8 +23,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies for TypeScript support)
+RUN npm ci
 
 # Copy built application from builder
 COPY --from=builder /app/.next ./.next
