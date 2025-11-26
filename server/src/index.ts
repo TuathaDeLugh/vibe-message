@@ -23,7 +23,7 @@ app.use(cors({
     if (config.server.nodeEnv === 'development') {
       return callback(null, true);
     }
-    
+
     if (!origin || config.cors.allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -46,15 +46,15 @@ app.get('/health', (req, res) => {
 });
 
 // Apply rate limiting to API routes
-app.use('/api', apiLimiter);
+app.use('/', apiLimiter);
 
 // Routes
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/apps', appsRoutes);
-app.use('/api/sdk', sdkRoutes);
-app.use('/api/push', pushRoutes);
+app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
+app.use('/apps', appsRoutes);
+app.use('/sdk', sdkRoutes);
+app.use('/push', pushRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // 404 handler
